@@ -1,6 +1,0 @@
-@TrabalhoDesignPatterns_HostAddress = http://localhost:5033
-
-GET {{TrabalhoDesignPatterns_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
