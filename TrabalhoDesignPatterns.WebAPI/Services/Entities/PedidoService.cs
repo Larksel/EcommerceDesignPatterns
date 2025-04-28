@@ -1,12 +1,34 @@
+using TrabalhoDesignPatterns.WebAPI.Objects.DTOs;
 using TrabalhoDesignPatterns.WebAPI.Objects.Enums;
 using TrabalhoDesignPatterns.WebAPI.Objects.Models;
+using TrabalhoDesignPatterns.WebAPI.Services.Interfaces;
 using TrabalhoDesignPatterns.WebAPI.Services.States;
 
 namespace TrabalhoDesignPatterns.WebAPI.Services.Entities;
 
-public class PedidoService : Pedido
+public class PedidoService : Pedido, IPedidoService
 {
     public IPedidoState State;
+
+    public PedidoService()
+    {
+        State = ObterEstadoClasse();
+    }
+
+    public Task<IEnumerable<PedidoDTO>> ListarTodos()
+    {
+
+    }
+
+    public Task<PedidoDTO> ObterPorId(int id)
+    {
+
+    }
+
+    public Task GerarPedido(PedidoDTO pedidoDTO)
+    {
+
+    }
 
     private IPedidoState ObterEstadoClasse()
     {
