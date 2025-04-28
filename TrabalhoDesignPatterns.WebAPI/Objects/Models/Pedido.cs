@@ -11,11 +11,11 @@ public class Pedido
 
     public Pedido() { }
 
-    public Pedido(int id, double valor, EstadoPedido estadoAtual, TipoFrete tipoFrete)
+    public Pedido(int id, double valor, TipoFrete tipoFrete)
     {
         Id = id;
         Valor = valor;
-        EstadoAtual = estadoAtual;
+        EstadoAtual = EstadoPedido.AGUARDANDO_PAGAMENTO;
         TipoFrete = tipoFrete;
     }
 }
