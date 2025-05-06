@@ -54,17 +54,6 @@ public class PedidoService : Pedido, IPedidoService
         await _repository.Update(entity);
     }
 
-    public async Task Cancelar(int id)
-    {
-        var entity = await _repository.GetById(id);
-        if (entity == null)
-        {
-            throw new KeyNotFoundException($"Entidade com id: {id} não encontrado");
-        }
-
-        await _repository.Remove(entity);
-    }
-
     public Task<PedidoDTO> SucessoAoPagar(PedidoDTO pedidoDTO)
     {
         throw new NotImplementedException();
@@ -85,17 +74,17 @@ public class PedidoService : Pedido, IPedidoService
     {
         return EstadoAtual switch
         {
-            EstadoPedido.AGUARDANDO_PAGAMENTO => new AguardandoPagamentoState(this),
-            EstadoPedido.PAGO => new PagoState(this),
-            EstadoPedido.ENVIADO => new EnviadoState(this),
-            EstadoPedido.CANCELADO => new CanceladoState(this),
+            EstadoPedido.AGUARDANDO_PAGAMENTO => new AguardandoPagamentoState(),
+            EstadoPedido.PAGO => new PagoState(),
+            EstadoPedido.ENVIADO => new EnviadoState(),
+            EstadoPedido.CANCELADO => new CanceladoState(),
             _ => throw new ArgumentException("Estado inválido"),
         };
     }
 
-    private EstadoPedido ObterEstadoEnum()
+    private EstadoPedido ObterEstadoEnum(IPedidoState state)
     {
-        return State switch
+        return state switch
         {
             AguardandoPagamentoState _ => EstadoPedido.AGUARDANDO_PAGAMENTO,
             PagoState _ => EstadoPedido.PAGO,

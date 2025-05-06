@@ -8,5 +8,8 @@ public interface IPedidoService
     Task<PedidoDTO> ObterPorId(int id);
     Task GerarPedido(PedidoDTO pedidoDTO);
     Task Atualizar(PedidoDTO pedidoDTO, int id);
-    Task Cancelar(int id);
+
+    Task<PedidoDTO> SucessoAoPagar(PedidoDTO pedidoDTO);
+    Task<PedidoDTO> DespacharPedido(PedidoDTO pedidoDTO);
+    Task<PedidoDTO> CancelarPedido(PedidoDTO pedidoDTO);
 }

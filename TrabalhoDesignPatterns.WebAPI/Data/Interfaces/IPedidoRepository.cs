@@ -8,6 +8,5 @@ public interface IPedidoRepository
     Task<Pedido> GetById(int id);
     Task Add(Pedido pedido);
     Task Update(Pedido pedido);
-    Task Remove(Pedido pedido);
     Task<bool> SaveChanges();
 }
