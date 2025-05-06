@@ -1,29 +1,18 @@
-using TrabalhoDesignPatterns.WebAPI.Objects.Enums;
-using TrabalhoDesignPatterns.WebAPI.Services.Entities;
-
 namespace TrabalhoDesignPatterns.WebAPI.Services.States;
 
 public class PagoState : IPedidoState
 {
-    private PedidoService _pedido;
-
-    public PagoState(PedidoService pedido)
+    public IPedidoState CancelarPedido()
     {
-        _pedido = pedido;
-        _pedido.EstadoAtual = EstadoPedido.PAGO;
+        return new CanceladoState();
     }
 
-    void IPedidoState.CancelarPedido()
+    public IPedidoState DespacharPedido()
     {
-        _pedido.State = new CanceladoState(_pedido);
+        return new EnviadoState();
     }
 
-    void IPedidoState.DespacharPedido()
-    {
-        _pedido.State = new EnviadoState(_pedido);
-    }
-
-    void IPedidoState.SucessoAoPagar()
+    public IPedidoState SucessoAoPagar()
     {
         throw new Exception("Operação não suportada, o pedido já foi pago");
     }

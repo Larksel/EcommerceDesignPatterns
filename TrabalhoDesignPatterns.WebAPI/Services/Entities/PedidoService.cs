@@ -10,12 +10,10 @@ namespace TrabalhoDesignPatterns.WebAPI.Services.Entities;
 public class PedidoService : Pedido, IPedidoService
 {
     private readonly IPedidoRepository _repository;
-    public IPedidoState State;
 
     public PedidoService(IPedidoRepository pedidoRepository)
     {
         _repository = pedidoRepository;
-        State = ObterEstadoClasse();
     }
 
     public async Task<IEnumerable<PedidoDTO>> ListarTodos()
@@ -56,7 +54,7 @@ public class PedidoService : Pedido, IPedidoService
         await _repository.Update(entity);
     }
 
-    public async Task Remover(int id)
+    public async Task Cancelar(int id)
     {
         var entity = await _repository.GetById(id);
         if (entity == null)
@@ -67,17 +65,17 @@ public class PedidoService : Pedido, IPedidoService
         await _repository.Remove(entity);
     }
 
-    public void SucessoAoPagar()
+    public Task<PedidoDTO> SucessoAoPagar(PedidoDTO pedidoDTO)
     {
         throw new NotImplementedException();
     }
 
-    public void DespacharPedido()
+    public Task<PedidoDTO> DespacharPedido(PedidoDTO pedidoDTO)
     {
         throw new NotImplementedException();
     }
 
-    public void CancelarPedido()
+    public Task<PedidoDTO> CancelarPedido(PedidoDTO pedidoDTO)
     {
         throw new NotImplementedException();
     }
