@@ -22,6 +22,8 @@
 
   <ItemGroup>
     <Folder Include="Data\Builders\" />
+    <Folder Include="Data\Interfaces\" />
+    <Folder Include="Data\Repositories\" />
     <Folder Include="Objects\Enums\" />
     <Folder Include="Objects\DTOs\" />
     <Folder Include="Services\Interfaces\" />
