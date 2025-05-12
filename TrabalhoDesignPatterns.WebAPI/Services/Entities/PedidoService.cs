@@ -4,6 +4,7 @@ using TrabalhoDesignPatterns.WebAPI.Objects.Enums;
 using TrabalhoDesignPatterns.WebAPI.Objects.Models;
 using TrabalhoDesignPatterns.WebAPI.Services.Interfaces;
 using TrabalhoDesignPatterns.WebAPI.Services.States;
+using TrabalhoDesignPatterns.WebAPI.Services.Strategies;
 
 namespace TrabalhoDesignPatterns.WebAPI.Services.Entities;
 
@@ -38,6 +39,10 @@ public class PedidoService : Pedido, IPedidoService
     public async Task GerarPedido(PedidoDTO entityDTO)
     {
         var entity = ConverterParaModel(entityDTO);
+
+        IFrete frete = CriarFretePorTipo(entity.TipoFrete);
+        // entity.Valor = frete.CalcularFrete(entity.Valor);
+
         await _repository.Add(entity);
     }
 
@@ -115,6 +120,16 @@ public class PedidoService : Pedido, IPedidoService
             EnviadoState _ => EstadoPedido.ENVIADO,
             CanceladoState _ => EstadoPedido.CANCELADO,
             _ => throw new ArgumentException("Estado inválido"),
+        };
+    }
+
+    private IFrete CriarFretePorTipo(TipoFrete tipoFrete)
+    {
+        return tipoFrete switch
+        {
+            TipoFrete.AEREO => new FreteAereo(),
+            TipoFrete.TERRESTRE => new FreteTerrestre(),
+            _ => throw new ArgumentException("Tipo de frete inválido"),
         };
     }
 
