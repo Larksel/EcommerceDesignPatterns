@@ -54,25 +54,49 @@ public class PedidoService : Pedido, IPedidoService
         await _repository.Update(entity);
     }
 
-    public Task<PedidoDTO> SucessoAoPagar(PedidoDTO pedidoDTO)
+    public async Task<PedidoDTO> SucessoAoPagar(PedidoDTO pedidoDTO)
     {
-        throw new NotImplementedException();
+        // Converter estado do DTO para uma classe State
+        IPedidoState state = ObterEstadoClasse(ConverterParaModel(pedidoDTO).EstadoAtual);
+
+        // Fazer a transição de estado
+        IPedidoState novoEstado = state.SucessoAoPagar();
+
+        // Converter o novo estado para o estado da DTO
+        pedidoDTO.EstadoAtual = (int)ObterEstadoEnum(novoEstado);
+
+        // Atualizar no banco
+        await Atualizar(pedidoDTO, pedidoDTO.Id);
+
+        return pedidoDTO;
     }
 
-    public Task<PedidoDTO> DespacharPedido(PedidoDTO pedidoDTO)
+    public async Task<PedidoDTO> DespacharPedido(PedidoDTO pedidoDTO)
     {
-        throw new NotImplementedException();
+        IPedidoState state = ObterEstadoClasse(ConverterParaModel(pedidoDTO).EstadoAtual);
+        IPedidoState novoEstado = state.DespacharPedido();
+        pedidoDTO.EstadoAtual = (int)ObterEstadoEnum(novoEstado);
+
+        await Atualizar(pedidoDTO, pedidoDTO.Id);
+
+        return pedidoDTO;
     }
 
-    public Task<PedidoDTO> CancelarPedido(PedidoDTO pedidoDTO)
+    public async Task<PedidoDTO> CancelarPedido(PedidoDTO pedidoDTO)
     {
-        throw new NotImplementedException();
+        IPedidoState state = ObterEstadoClasse(ConverterParaModel(pedidoDTO).EstadoAtual);
+        IPedidoState novoEstado = state.CancelarPedido();
+        pedidoDTO.EstadoAtual = (int)ObterEstadoEnum(novoEstado);
+
+        await Atualizar(pedidoDTO, pedidoDTO.Id);
+
+        return pedidoDTO;
     }
 
     #region Métodos de Conversão
-    private IPedidoState ObterEstadoClasse()
+    private IPedidoState ObterEstadoClasse(EstadoPedido estadoPedido)
     {
-        return EstadoAtual switch
+        return estadoPedido switch
         {
             EstadoPedido.AGUARDANDO_PAGAMENTO => new AguardandoPagamentoState(),
             EstadoPedido.PAGO => new PagoState(),
