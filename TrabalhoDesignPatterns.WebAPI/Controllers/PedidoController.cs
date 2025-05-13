@@ -50,7 +50,7 @@ public class PedidoController : Controller
         }
         catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao gerar pedido");
+            return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao gerar pedido: {ex.Message}");
         }
     }
 
@@ -76,7 +76,7 @@ public class PedidoController : Controller
         }
         catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao atualizar pedido");
+            return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao atualizar pedido: {ex.Message}");
         }
     }
 
