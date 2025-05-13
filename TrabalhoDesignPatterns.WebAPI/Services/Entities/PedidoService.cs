@@ -33,30 +33,53 @@ public class PedidoService : Pedido, IPedidoService
     public async Task<PedidoDTO> ObterPorId(int id)
     {
         var pedido = await _repository.GetById(id);
+
+        if (pedido is null)
+        {
+            return null;
+        }
+
         return ConverterParaDTO(pedido);
     }
 
-    public async Task GerarPedido(PedidoDTO pedidoDTO)
+    public async Task<PedidoDTO> GerarPedido(PedidoDTO pedidoDTO)
     {
         var pedido = ConverterParaModel(pedidoDTO);
-
         IFrete frete = CriarFretePorTipo(pedido.TipoFrete);
+
+        pedido.EstadoAtual = EstadoPedido.AGUARDANDO_PAGAMENTO;
         pedido.ValorFrete = frete.CalcularFrete(pedido.Subtotal);
 
         await _repository.Add(pedido);
+        return ConverterParaDTO(pedido);
     }
 
-    public async Task Atualizar(PedidoDTO pedidoDTO, int id)
+    public async Task<PedidoDTO> Atualizar(PedidoDTO pedidoDTO, int id)
     {
         var existingPedido = await _repository.GetById(id);
 
-        if (existingPedido == null)
+        if (existingPedido is null)
         {
             throw new KeyNotFoundException($"Pedido com id {id} não encontrado.");
         }
 
+        if (existingPedido.EstadoAtual == EstadoPedido.AGUARDANDO_PAGAMENTO)
+        {
+            // Evita que o campo de estado seja alterado diretamente pelo usuário
+            pedidoDTO.EstadoAtual = (int)existingPedido.EstadoAtual;
+
+            // Recalcula o valor do frete
+            IFrete frete = CriarFretePorTipo((TipoFrete)pedidoDTO.TipoFrete);
+            pedidoDTO.ValorFrete = frete.CalcularFrete(pedidoDTO.Subtotal);
+        } else
+        {
+            throw new Exception("Não é permitido atualizar o pedido, após sua confirmação/cancelamento.");
+        }
+
         var pedido = ConverterParaModel(pedidoDTO);
         await _repository.Update(pedido);
+
+        return pedidoDTO;
     }
 
     public async Task<PedidoDTO> SucessoAoPagar(PedidoDTO pedidoDTO)
@@ -71,7 +94,7 @@ public class PedidoService : Pedido, IPedidoService
         pedidoDTO.EstadoAtual = (int)ObterEstadoEnum(novoEstado);
 
         // Atualizar no banco
-        await Atualizar(pedidoDTO, pedidoDTO.Id);
+        await _repository.Update(ConverterParaModel(pedidoDTO));
 
         return pedidoDTO;
     }
@@ -82,7 +105,7 @@ public class PedidoService : Pedido, IPedidoService
         IPedidoState novoEstado = state.DespacharPedido();
         pedidoDTO.EstadoAtual = (int)ObterEstadoEnum(novoEstado);
 
-        await Atualizar(pedidoDTO, pedidoDTO.Id);
+        await _repository.Update(ConverterParaModel(pedidoDTO));
 
         return pedidoDTO;
     }
@@ -93,7 +116,7 @@ public class PedidoService : Pedido, IPedidoService
         IPedidoState novoEstado = state.CancelarPedido();
         pedidoDTO.EstadoAtual = (int)ObterEstadoEnum(novoEstado);
 
-        await Atualizar(pedidoDTO, pedidoDTO.Id);
+        await _repository.Update(ConverterParaModel(pedidoDTO));
 
         return pedidoDTO;
     }
