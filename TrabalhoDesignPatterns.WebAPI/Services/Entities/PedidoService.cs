@@ -19,44 +19,44 @@ public class PedidoService : Pedido, IPedidoService
 
     public async Task<IEnumerable<PedidoDTO>> ListarTodos()
     {
-        var entities = await _repository.Get();
-        List<PedidoDTO> entitiesDTO = [];
+        var pedidos = await _repository.Get();
+        List<PedidoDTO> pedidosDTO = [];
 
-        foreach (var entity in entities)
+        foreach (var pedido in pedidos)
         {
-            entitiesDTO.Add(ConverterParaDTO(entity));
+            pedidosDTO.Add(ConverterParaDTO(pedido));
         }
 
-        return entitiesDTO;
+        return pedidosDTO;
     }
 
     public async Task<PedidoDTO> ObterPorId(int id)
     {
-        var entity = await _repository.GetById(id);
-        return ConverterParaDTO(entity);
+        var pedido = await _repository.GetById(id);
+        return ConverterParaDTO(pedido);
     }
 
-    public async Task GerarPedido(PedidoDTO entityDTO)
+    public async Task GerarPedido(PedidoDTO pedidoDTO)
     {
-        var entity = ConverterParaModel(entityDTO);
+        var pedido = ConverterParaModel(pedidoDTO);
 
-        IFrete frete = CriarFretePorTipo(entity.TipoFrete);
-        entity.ValorFrete = frete.CalcularFrete(entity.Subtotal);
+        IFrete frete = CriarFretePorTipo(pedido.TipoFrete);
+        pedido.ValorFrete = frete.CalcularFrete(pedido.Subtotal);
 
-        await _repository.Add(entity);
+        await _repository.Add(pedido);
     }
 
-    public async Task Atualizar(PedidoDTO entityDTO, int id)
+    public async Task Atualizar(PedidoDTO pedidoDTO, int id)
     {
-        var existingEntity = await _repository.GetById(id);
+        var existingPedido = await _repository.GetById(id);
 
-        if (existingEntity == null)
+        if (existingPedido == null)
         {
-            throw new KeyNotFoundException($"Entity with id {id} not found.");
+            throw new KeyNotFoundException($"Pedido com id {id} não encontrado.");
         }
 
-        var entity = ConverterParaModel(entityDTO);
-        await _repository.Update(entity);
+        var pedido = ConverterParaModel(pedidoDTO);
+        await _repository.Update(pedido);
     }
 
     public async Task<PedidoDTO> SucessoAoPagar(PedidoDTO pedidoDTO)
