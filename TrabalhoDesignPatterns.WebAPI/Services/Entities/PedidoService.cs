@@ -41,7 +41,7 @@ public class PedidoService : Pedido, IPedidoService
         var entity = ConverterParaModel(entityDTO);
 
         IFrete frete = CriarFretePorTipo(entity.TipoFrete);
-        // entity.Valor = frete.CalcularFrete(entity.Valor);
+        entity.ValorFrete = frete.CalcularFrete(entity.Subtotal);
 
         await _repository.Add(entity);
     }
@@ -138,7 +138,8 @@ public class PedidoService : Pedido, IPedidoService
         PedidoDTO pedidoDTO = new()
         {
             Id = pedido.Id,
-            Valor = pedido.Valor,
+            Subtotal = pedido.Subtotal,
+            ValorFrete = pedido.ValorFrete,
             EstadoAtual = (int)pedido.EstadoAtual,
             TipoFrete = (int)pedido.TipoFrete,
         };
@@ -151,7 +152,8 @@ public class PedidoService : Pedido, IPedidoService
         Pedido pedido = new()
         {
             Id = pedidoDTO.Id,
-            Valor = pedidoDTO.Valor,
+            Subtotal = pedidoDTO.Subtotal,
+            ValorFrete = pedidoDTO.ValorFrete,
             EstadoAtual = (EstadoPedido)pedidoDTO.EstadoAtual,
             TipoFrete = (TipoFrete)pedidoDTO.TipoFrete,
         };
