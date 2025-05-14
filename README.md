@@ -1,4 +1,4 @@
-# 🛒 Sistema de Controle de Pedidos de E-commerce com Design Patterns
+# 🛒 Sistema de E-commerce com Design Patterns
 
 ## 📌 Introdução
 
