@@ -37,16 +37,20 @@ A camada **Repository** é responsável pela comunicação com o banco de dados,
 
 ### 🧰 2. **Service**
 
-![image](https://github.com/user-attachments/assets/aa57c603-f305-4a1f-ae4d-2091b1edda02)
-
 A camada **Service** contém a lógica de negócios. Aqui, implementamos as transições de status do pedido e os cálculos de frete de acordo com os tipos de envio disponíveis. Além disso, é onde os **Design Patterns** foram aplicados:
 
 * **State**: Implementação de diferentes estados do pedido em classes separadas e as ações permitidas em cada um.
 * **Strategy**: Implementação das estratégias de cálculo de frete, permitindo a adição de novos métodos de envio sem a necessidade de alterar o código existente.
 
-#### 📄 Classes principais:
+![image](https://github.com/user-attachments/assets/aa57c603-f305-4a1f-ae4d-2091b1edda02)
 
-* **PedidoService**: Responsável por gerenciar os pedidos e realizar as conversões necessárias.
+#### 📄 PedidoService:
+
+* É responsável por gerenciar os pedidos e realizar as conversões necessárias.
+* Ao gerar o pedido, o estado é definido como "Aguardando Pagamento" e o valor do frete é calculado.
+* Ao atualizar as informações do pedido, se ele ainda estiver "Aguardando pagamento", ela evita que o estado seja alterado diretamente pelo usuário e o frete é recalculado para cobrir possíveis mudanças nos preços. Se o pedido estiver em outro estado, a operação é cancelada.
+* As demais operações cuidam da lógica de transição de estado por meio do padrão **State** e conversões.
+* Há conversões entre classe Model e DTO, estado do padrão State com valor de enum EstadoPedido, e classe Frete do padrão Strategy de acordo com o valor do enum TipoFrete. 
 
 ### 🧭 3. **Controller**
 
